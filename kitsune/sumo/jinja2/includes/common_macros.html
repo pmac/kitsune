@@ -139,8 +139,10 @@
 {% endmacro %}
 
 {% macro favicon() %}
-  {% set sizes = (512, 256, 128, 64, 32, 16,) %}
-  {% for s in sizes %}
-    <link rel="icon" type="image/png" sizes="{{ s }}x{{ s }}" href="{{ STATIC_URL }}sumo/img/firefox-{{ s }}.png?v=1">
-  {% endfor %}
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/sumo/img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/sumo/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/sumo/img/favicon-16x16.png">
+  <link rel="manifest" href="/static/sumo/manifest.json">
+  <link rel="shortcut icon" href="/static/sumo/img/favicon.ico">
+  <meta name="theme-color" content="#ffffff">
 {% endmacro %}
