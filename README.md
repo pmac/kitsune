@@ -11,69 +11,57 @@ See [what's deployed](https://whatsdeployed.io/s-J18)
 
 ## Development
 
-To setup a local Kitsune development environment:
+To get Kitsune running locally all you really need is to have [Docker installed](https://www.docker.com/products/docker-desktop),
+and follow the following steps.
 
 1. Fork this repository & clone it to your local machine.
-
-1. Download base Kitsune docker images:
    ```
-   docker pull mozmeao/kitsune:base-latest
-   docker pull mozmeao/kitsune:base-dev-latest
+   git clone https://github.com/mozilla/kitsune.git
    ```
 
-1. Build Kitsune docker images. (Only needed on initial build or when packages change)
+2. Download base Kitsune docker images:
    ```
-   docker-compose -f docker-compose.yml -f docker/composefiles/build.yml build base
-   docker-compose -f docker-compose.yml -f docker/composefiles/build.yml build dev
-   ```
-
-1. Copy .env-dist to .env
-   ```
-   cp .env-dist .env
+   make pull
    ```
 
-1. Create your database
+3. Create your database and install node and bower packages
    ```
-   docker-compose -f docker-compose.yml -f docker/composefiles/dev.yml run web ./manage.py migrate
-   ```
-
-1. Install node and bower packages
-   ```
-   docker-compose -f docker-compose.yml -f docker/composefiles/dev.yml run web yarn
-   docker-compose -f docker-compose.yml -f docker/composefiles/dev.yml run web ./node_modules/.bin/bower install --allow-root
+   make init
    ```
 
-1. (Optional) Enable the admin control panel
+4. (Optional) Enable the admin control panel
    ```
    echo "ENABLE_ADMIN=True" >> .env
    ```
 
-1. Run Kitsune
+5. Run Kitsune
    ```
-   docker-compose -f docker-compose.yml -f docker/composefiles/dev.yml up web
-   ```
-
-   The running instance will be located at http://0.0.0.0:8000/ unless you specified otherwise, and the administrative control panel will be at http://0.0.0.0:8000/admin.
-
-1. (Optional) Create a superuser
-   ```
-   docker-compose -f docker-compose.yml -f docker/composefiles/dev.yml exec web ./manage.py createsuperuser
+   make run
    ```
 
-1. (Optional) Create some data
-   ```
-   docker-compose -f docker-compose.yml -f docker/composefiles/dev.yml exec web ./manage.py generatedata
-   ```
+The running instance will be located at http://0.0.0.0:8000/ unless you specified otherwise, and the administrative control panel will be at http://0.0.0.0:8000/admin.
 
-1. (Optional) Update product details
-   ```
-   docker-compose -f docker-compose.yml -f docker/composefiles/dev.yml exec web ./manage.py update_product_details
-   ```
+After that you can do some additional optional steps if you want to for the admin:
 
-1. (Optional) Get search working
+* Create a superuser
+  ```
+  docker-compose exec web ./manage.py createsuperuser
+  ```
+
+* Create some data
+  ```
+  docker-compose exec web ./manage.py generatedata
+  ```
+
+* Update product details
+  ```
+  docker-compose exec web ./manage.py update_product_details
+  ```
+
+* Get search working
 
    First, make sure you have run the "Create some data" step above.
 
-   1. Enter the web container: `docker exec -it kitsune_web_1 /bin/bash`
+   1. Enter the web container: `docker-compose exec web bash`
    2. Build the indicies: `./manage.py esreindex` (You may need to pass the `--delete` flag)
    3. Precompile the nunjucks templates: `./manage.py nunjucks_precompile`
